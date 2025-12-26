@@ -7,7 +7,7 @@ The following technologies are used:
 | **MinIO**                | Object storage for Iceberg table data and metadata (Parquet/ORC files). Acts as an S3-compatible backend.                                    |
 | **Iceberg REST Catalog** | Exposes Iceberg tables via REST API. Resolves metadata, active snapshots, and Parquet file paths. Integrates Ranger plugin for ACLs/masking. |
 | **Ranger Admin**         | Web-based management UI for creating and managing security policies (table/column-level access, masking).                                    |
-| **Ranger DB**    | Stores Ranger policies, users, and service definitions.   
+| **Ranger DB**            | Stores Ranger policies, users, and service definitions.   
 
 
 To start the datalake, execute the following:
@@ -23,11 +23,11 @@ Key technologies used in the project:
 
 | Service                  | Description                                                                                                                                         |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **python 3.12** | Single programming language used by all libraries |
-| **uv** | Package and project manager written in Rust. |
-| **daft** | General-purpose computation engine written in Rust. |
-| **lark** | Grammar parsing tool. |
-| **rustworkx** | High-performance graph library written in Rust. |
+| **python 3.12**          | Single programming language used by all libraries                                                      |
+| **uv**                   | Package and project manager written in Rust.                                                           |
+| **daft**                 | General-purpose computation engine written in Rust.                                                    |
+| **lark**                 | Grammar parsing tool.                                                                                  |
+| **rustworkx**            | High-performance graph library written in Rust.                                                        |
 
 
 For creating a single-node computation environment, run:
