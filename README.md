@@ -21,9 +21,9 @@ docker compose up -d
 
 Key technologies used in the project:
 
-| Service                  | Description                                                                                                                                         |
+| Library                  | Description                                                                                                                                         |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **python 3.12**          | Single programming language used by all libraries                                                      |
+| **python**               | Using python 3.12 as unique programming language used by all libraries                                                      |
 | **uv**                   | Package and project manager written in Rust.                                                           |
 | **daft**                 | General-purpose computation engine written in Rust.                                                    |
 | **lark**                 | Grammar parsing tool.                                                                                  |
