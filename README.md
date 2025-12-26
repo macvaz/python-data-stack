@@ -5,7 +5,7 @@ cd infrastructure/datalake/
 docker compose up -d
 ```
 
-### Single node computation engine
+### Single node computations
 
 The source code is based on Python 3.12 and the project is managed by 'uv'.
 
@@ -21,3 +21,6 @@ For running some examples:
 uv run tests/iceberg/ddl.py
 uv run tests/iceberg/etl.py
 ```
+
+### Cluster-based computations
+TBD
