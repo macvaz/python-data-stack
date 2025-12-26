@@ -3,14 +3,12 @@ name = "formula-engine"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dependencies = [
     "boto3>=1.42.16",
     "daft[client]",
-    "docker-autocompose>=1.0.1",
-    "pandas>=2.3.3",
     "pyiceberg>=0.10.0",
-    "ray[client,default]==2.46",
+    "ray[client,default]",
 ]
 
 [build-system]
@@ -25,5 +23,3 @@ dev = [
     "ruff>=0.14.9",
 ]
 
-[[tool.mypy.overrides]]
-#ignore_missing_imports = True

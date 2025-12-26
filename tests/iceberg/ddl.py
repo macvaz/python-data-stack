@@ -47,7 +47,7 @@ partition_spec = PartitionSpec(
 sort_order = SortOrder(SortField(source_id=2, transform='identity'))
 
 catalog.create_table(
-    identifier="catalog_example.bids3",
+    identifier="catalog_example.bids5",
     schema=schema,
     partition_spec=partition_spec,
     sort_order=sort_order,
