@@ -7,9 +7,13 @@ docker compose up -d
 
 ### Single node computations
 
-The source code is based on Python 3.12 and the project is managed by 'uv'.
+Key technologies used in the project:
 
-for having a single-node environment, run:
+* Python 3.12
+* **uv** as package and project manager
+* **daft** as computation engine
+
+For creating a single-node computation environment, run:
 
 ```bash
 uv sync
