@@ -2,7 +2,7 @@
 
 The following technologies are used:
 
-| Service                  | Role                                                                                                                                         |
+| Service                  | Description                                                                                                                                         |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | **MinIO**                | Object storage for Iceberg table data and metadata (Parquet/ORC files). Acts as an S3-compatible backend.                                    |
 | **Iceberg REST Catalog** | Exposes Iceberg tables via REST API. Resolves metadata, active snapshots, and Parquet file paths. Integrates Ranger plugin for ACLs/masking. |
@@ -21,11 +21,14 @@ docker compose up -d
 
 Key technologies used in the project:
 
-* **python 3.12** as single programming language
-* **uv** as package and project manager
-* **daft** as general-purpose computation engine
-* **lark** as grammar parsing tool
-* **rustworkx** as graph library
+| Service                  | Description                                                                                                                                         |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **python 3.12** | Single programming language used by all libraries |
+| **uv** | Package and project manager written in Rust. |
+| **daft** | General-purpose computation engine written in Rust. |
+| **lark** | Grammar parsing tool. |
+| **rustworkx** | High-performance graph library written in Rust. |
+
 
 For creating a single-node computation environment, run:
 
@@ -42,6 +45,6 @@ uv run tests/iceberg/etl.py
 
 ### Cluster-based data pipelines
 
-Based on kuberentes cluster and a ray cluster.
+Based on kuberentes container orchestrator and a ray distributed engine.
 
 TBD
