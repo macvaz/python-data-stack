@@ -1,0 +1,83 @@
+services:
+  ranger-db:
+    image: apache/ranger-db:2.7.0
+    container_name: ranger-db
+    hostname: ranger-db.example.com
+    networks:
+      - datalake
+    healthcheck:
+      test: ["CMD-SHELL", "su -c 'pg_isready -q' postgres"]
+      interval: 10s
+      timeout: 2s
+      retries: 30
+    restart: unless-stopped
+
+  ranger:
+    image: apache/ranger:2.7.0
+    container_name: ranger
+    hostname: ranger.example.com
+    networks:
+      - datalake
+    depends_on:
+      - ranger-db
+    environment:
+      RANGER_VERSION: 2.7.0
+      RANGER_DB_TYPE: postgres
+    ports:
+      - "6080:6080" #admin/rangerR0cks!
+    command: /home/ranger/scripts/ranger.sh
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    hostname: minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_REGION: us-east-1
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   
+      - "9001:9001"   #minioadmin/minioadmin
+    volumes:
+      - minio-data:/data
+    networks:
+      datalake:
+          aliases:
+            - minio.minio
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      retries: 5
+
+  catalog:
+    image: apache/iceberg-rest-fixture
+    container_name: catalog
+    hostname: catalog
+    networks:
+      - datalake
+    ports:
+      - 8181:8181
+    depends_on:
+      - ranger
+      - minio
+    environment:
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      AWS_REGION: us-east-1
+      CATALOG_WAREHOUSE: s3://minio/warehouse/
+      CATALOG_IO__IMPL: org.apache.iceberg.aws.s3.S3FileIO
+      CATALOG_S3_ENDPOINT: http://minio:9000
+      ICEBERG_RANGER_PLUGIN_ENABLED: "true"
+      RANGER_URL: http://ranger:6080
+      RANGER_SERVICE_NAME: iceberg
+      RANGER_POLICY_NAME: iceberg-policy
+      
+
+networks:
+  datalake:
+    driver: bridge
+
+volumes:
+  minio-data:
