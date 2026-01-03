@@ -6,11 +6,8 @@ Docker-based moder datalake solution including:
 
 Manual steps
 1. enable migrate in lakekeeper
-2. docker run --rm -v "$(pwd)/authelia/config:/keys" authelia/authelia:latest \
-    authelia crypto pair rsa generate --directory /keys
+2. Create applications in zitadel
 
+Visit http://host.docker.internal:8080/ui/console?login_hint=zitadel-admin@zitadel.host.docker.internal and enter Password1! to log in.
 
-3. docker run --rm authelia/authelia:latest     authelia crypto hash generate argon2 --password 'lakekeeper-ka93k339fkk&&222'
-
-4. docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'admin-pwd123'
-5. docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'ds_user1-pwd123'
+cliendid: 353971446394978310

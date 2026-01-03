@@ -17,15 +17,55 @@ services:
       retries: 5
 
   # --- IDENTITY LAYER ---
-  authelia:
-    image: authelia/authelia
-    container_name: authelia
-    user: "1000:1000" # Avoid running as root
+  db-zitadel:
+    image: postgres:15
+    container_name: db-zitadel
+    environment:
+      - POSTGRES_USER=${ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME}
+      - POSTGRES_PASSWORD=${ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD}
     volumes:
-      - ./authelia/config:/config
+      - zitadel_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  zitadel:
+    image: ghcr.io/zitadel/zitadel:latest
+    container_name: zitadel
+    depends_on:
+      db-zitadel:
+        condition: service_healthy
     ports:
-      - "9091:9091"
-    #restart: unless-stopped
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      ZITADEL_EXTERNALDOMAIN: ${DOMAIN}
+      ZITADEL_EXTERNALSECURE: false
+      ZITADEL_TLS_ENABLED: false
+      ZITADEL_MASTERKEY: ${ZITADEL_MASTERKEY}
+      ZITADEL_DATABASE_POSTGRES_HOST: db-zitadel
+      ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME: ${ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME}
+      ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD: ${ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD}
+      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: ${ZITADEL_DATABASE_POSTGRES_USER_USERNAME}
+      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: ${ZITADEL_DATABASE_POSTGRES_USER_PASSWORD}
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED: false
+      ZITADEL_SYSTEM_DOMAINS_INTERNAL_DOMAINS: zitadel,host.docker.internal
+    volumes:
+      - ./ssl:/ssl:ro # Mount your local certs folder
+    healthcheck:
+      test: ["CMD", "/app/zitadel", "ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s # Give it time for the first-run database setup
+    command: >
+      start-from-init 
+      --masterkeyFromEnv 
+      --tlsMode disabled
+   
 
   # --- CATALOG LAYER (Iceberg REST) ---
   db-lakekeeper:
@@ -48,16 +88,24 @@ services:
     container_name: lakekeeper
     ports:
       - "8181:8181"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - LAKEKEEPER__PG_DATABASE_URL_WRITE=postgresql://${LAKEKEEPER_DB_USER}:${LAKEKEEPER_DB_PASSWORD}@db-lakekeeper:5432/${LAKEKEEPER_DB_NAME}
       - LAKEKEEPER__PG_ENCRYPTION_KEY=${LAKEKEEPER_ENCRYPTION_KEY}
       - LAKEKEEPER__BASE_URI=http://lakekeeper:8181
       - LAKEKEEPER__AUTHZ_BACKEND=allowall # Start simple, then switch to OpenFGA
-      - LAKEKEEPER__OPENID_PROVIDER_URI=http://authelia:9091
-      - LAKEKEEPER__OPENID_AUDIENCE=lakekeeper-client
+      - LAKEKEEPER__OPENID_PROVIDER_URI=http://host.docker.internal:8080
+      - LAKEKEEPER__OPENID_AUDIENCE=353971446394978310
+      - LAKEKEEPER__UI__OPENID_CLIENT_ID=353971446394978310
       - LAKEKEEPER__AUTHORIZATION_ENABLED=true
+      - LAKEKEEPER__OPENID_SUBJECT_CLAIM=sub
+      - LAKEKEEPER__OPENID_ADDITIONAL_ISSUERS=http://localhost:8080
+      - LAKEKEEPER__DEBUG__LOG_REQUEST_BODIES=true
     depends_on:
       db-lakekeeper:
+        condition: service_healthy
+      zitadel:
         condition: service_healthy
     # command: ["migrate"] # Creating database. Only needed on first run
     command: ["serve"]
@@ -113,3 +161,4 @@ services:
 # TOP-LEVEL DECLARATION
 volumes:
   lakekeeper_db_data:
+  zitadel_db_data:
