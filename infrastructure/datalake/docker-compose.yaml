@@ -1,66 +1,78 @@
 services:
   # --- STORAGE LAYER ---
-  minio:
-    image: minio/minio
-    container_name: minio
-    ports:
-      - "9000:9000" # API
-      - "9001:9001" # Console
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    command: server /data --console-address ":9001"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 5s
-      timeout: 2s
-      retries: 5
+  # minio:
+  #   image: minio/minio
+  #   container_name: minio
+  #   ports:
+  #     - "9000:9000" # API
+  #     - "9001:9001" # Console
+  #   environment:
+  #     MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+  #     MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+  #   command: server /data --console-address ":9001"
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+  #     interval: 5s
+  #     timeout: 2s
+  #     retries: 5
 
   # --- IDENTITY LAYER ---
   authelia:
     image: authelia/authelia
     container_name: authelia
     user: "1000:1000" # Avoid running as root
+    command: ["--config", "/config/configuration.yml"]
     volumes:
       - ./authelia/config:/config
+      - ./authelia/storage:/storage
+      - ./authelia/ssl:/ssl
     ports:
       - "9091:9091"
+    environment:
+      - X_AUTHELIA_CONFIG_FILTERS=template
+      - X_AUTHELIA_CONFIG=/config/configuration.yml
+      - AUTHELIA_JWT_SECRET=${AUTHELIA_JWT_SECRET}
+      - AUTHELIA_SESSION_SECRET=${AUTHELIA_SESSION_SECRET}
+      - AUTHELIA_STORAGE_ENCRYPTION_KEY=${AUTHELIA_STORAGE_ENCRYPTION_KEY}
+      - DOMAIN=${DOMAIN}
+      - SERVER_TLS_KEY=${SERVER_TLS_KEY}
+      - SERVER_TLS_CERT=${SERVER_TLS_CERT}
     #restart: unless-stopped
 
   # --- CATALOG LAYER (Iceberg REST) ---
-  db-lakekeeper:
-    image: postgres:15
-    container_name: db-lakekeeper
-    environment:
-      POSTGRES_USER: ${LAKEKEEPER_DB_USER}
-      POSTGRES_PASSWORD: ${LAKEKEEPER_DB_PASSWORD}
-      POSTGRES_DB: ${LAKEKEEPER_DB_NAME}
-    volumes:
-      - lakekeeper_db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+  # db-lakekeeper:
+  #   image: postgres:15
+  #   container_name: db-lakekeeper
+  #   environment:
+  #     POSTGRES_USER: ${LAKEKEEPER_DB_USER}
+  #     POSTGRES_PASSWORD: ${LAKEKEEPER_DB_PASSWORD}
+  #     POSTGRES_DB: ${LAKEKEEPER_DB_NAME}
+  #   volumes:
+  #     - lakekeeper_db_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
 
-  lakekeeper:
-    image: quay.io/lakekeeper/catalog:latest
-    container_name: lakekeeper
-    ports:
-      - "8181:8181"
-    environment:
-      - LAKEKEEPER__PG_DATABASE_URL_WRITE=postgresql://${LAKEKEEPER_DB_USER}:${LAKEKEEPER_DB_PASSWORD}@db-lakekeeper:5432/${LAKEKEEPER_DB_NAME}
-      - LAKEKEEPER__PG_ENCRYPTION_KEY=${LAKEKEEPER_ENCRYPTION_KEY}
-      - LAKEKEEPER__BASE_URI=http://lakekeeper:8181
-      - LAKEKEEPER__AUTHZ_BACKEND=allowall # Start simple, then switch to OpenFGA
-      - LAKEKEEPER__OPENID_PROVIDER_URI=http://authelia:9091
-      - LAKEKEEPER__OPENID_AUDIENCE=lakekeeper-client
-      - LAKEKEEPER__AUTHORIZATION_ENABLED=true
-    depends_on:
-      db-lakekeeper:
-        condition: service_healthy
-    # command: ["migrate"] # Creating database. Only needed on first run
-    command: ["serve"]
+  # lakekeeper:
+  #   image: quay.io/lakekeeper/catalog:latest
+  #   container_name: lakekeeper
+  #   ports:
+  #     - "8181:8181"
+  #   environment:
+  #     - LAKEKEEPER__PG_DATABASE_URL_WRITE=postgresql://${LAKEKEEPER_DB_USER}:${LAKEKEEPER_DB_PASSWORD}@db-lakekeeper:5432/${LAKEKEEPER_DB_NAME}
+  #     - LAKEKEEPER__PG_ENCRYPTION_KEY=${LAKEKEEPER_ENCRYPTION_KEY}
+  #     - LAKEKEEPER__BASE_URI=http://lakekeeper:8181
+  #     - LAKEKEEPER__AUTHZ_BACKEND=allowall # Start simple, then switch to OpenFGA
+  #     - LAKEKEEPER__OPENID_PROVIDER_URI=http://authelia:9091
+  #     - LAKEKEEPER__OPENID_AUDIENCE=lakekeeper-client
+  #     - LAKEKEEPER__AUTHORIZATION_ENABLED=true
+  #   depends_on:
+  #     db-lakekeeper:
+  #       condition: service_healthy
+  #   # command: ["migrate"] # Creating database. Only needed on first run
+  #   command: ["serve"]
 
   # --- OBSERVABILITY LAYER ---
   # db-marquez:
@@ -93,22 +105,22 @@ services:
   #       condition: service_healthy
 
   # --- PROCESSING LAYER (Jupyter with Daft) ---
-  daft-jupyter:
-    image: jupyter/minimal-notebook:latest
-    container_name: daft-jupyter
-    ports:
-      - "8888:8888"
-    environment:
-      - OPENLINEAGE_URL=http://marquez:5000
-      - OPENLINEAGE_NAMESPACE=dev_lakehouse
-      - AWS_ENDPOINT_URL=http://minio:9000
-      - JUPYTER_ENABLE_LAB=yes
-    volumes:
-      - ./notebooks:/home/mac/job/bigdata/python-data-stack/notebooks
-    # This command installs the necessary rust-powered tools on startup
-    command: >
-      start-notebook.sh --NotebookApp.token='' 
-      --BeforeStarting.python_cmd='pip install getdaft openlineage-python pyiceberg'
+  # daft-jupyter:
+  #   image: jupyter/minimal-notebook:latest
+  #   container_name: daft-jupyter
+  #   ports:
+  #     - "8888:8888"
+  #   environment:
+  #     - OPENLINEAGE_URL=http://marquez:5000
+  #     - OPENLINEAGE_NAMESPACE=dev_lakehouse
+  #     - AWS_ENDPOINT_URL=http://minio:9000
+  #     - JUPYTER_ENABLE_LAB=yes
+  #   volumes:
+  #     - ./notebooks:/home/mac/job/bigdata/python-data-stack/notebooks
+  #   # This command installs the necessary rust-powered tools on startup
+  #   command: >
+  #     start-notebook.sh --NotebookApp.token='' 
+  #     --BeforeStarting.python_cmd='pip install getdaft openlineage-python pyiceberg'
 
 # TOP-LEVEL DECLARATION
 volumes:
