@@ -12,7 +12,7 @@ The following requirements are needed for a modern lakehouse:
 | **Fine-Grained Access Control (FGAC)** | Restricting access at the **row and column level** rather than just the bucket or folder level. |
 | **S3-compatible storage with credential vending** | Providing short-lived, scoped credentials (session tokens) to compute engines (Spark, Trino, Flink) on top of S3-compatible storage  without exposing long-term IAM keys. |
 | **Auditing** | A comprehensive trail of **who** accessed **what** data, when, and with which query engine. |
-| **Python code for DE** | Python is the prevalent language for DS and AI. Additionally, based on its vast library ecosystem, provides a **smooth path to DE for citizen developers**. Consequenly, technical and non-technical users could build complex data pipelines with minimal friction.|
+| **Coding in Python for DE** | Python is the prevalent language for DS and AI. Additionally, based on its vast library ecosystem, provides a **smooth path to DE for citizen developers**. Consequenly, technical and non-technical users could build complex data pipelines with minimal friction.|
 | **High performance** | Modern libraries are used in Python but written in rust, leveraging vectorized execution and **Apache Arrow to provide lightning-fast, zero-copy data** processing that scales from **local machines to massive clusters**. |
 | **Unified container platform** | Unified data cluster allowing seamless resource sharing across data science, data engineering and AI training. |
 | **Centralized identity** | Single **source of truth for user and service identities**, enabling the uniform enforcement of security policies across all data,  applications and infrastructure, radically simplifing compliance auditing through a unified trail of every access event. |
@@ -27,7 +27,7 @@ The following technology stack leverages open-source standards and containerized
 | [OpenFGA](https://openfga.dev/) | FGA | TBD | Lakekeeper
 | [MinIO](https://github.com/minio/minio) | S3 storage with credential vending | [http://localhost:9001](http://localhost:9001) | Lakekeeper, Zitadel
 | [Zitadel](https://github.com/zitadel/zitadel) | Centralized identity, Auditing | [http://host.docker.internal:8080/](http://host.docker.internal:8080/ui/console/) |
-| [Daft](https://github.com/Eventual-Inc/Daft) | Python code for DE | [http://localhost:8888](http://localhost:8888) | Jupyter notebooks
+| [Daft](https://github.com/Eventual-Inc/Daft) | Coding in Python for DE | [http://localhost:8888](http://localhost:8888) | Jupyter notebooks
 | [Kubernetes](https://github.com/kubernetes/kubernetes) | Unified container platform | TBD | 
 | [Ray](https://github.com/ray-project/ray) | Python-based distributed computating framework | TBD | kuberay (ray cluster on top of kubernetes), daft
 
