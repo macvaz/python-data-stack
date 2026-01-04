@@ -24,7 +24,7 @@ The following technology stack leverages open-source standards and containerized
 | Service repo | Requirements | Service URL | Related services
 | :--- | :--- | :--- | :--- |
 | [Lakekeeper](https://github.com/lakekeeper/lakekeeper) | Iceberg catalog, Auditing | [http://localhost:8181](http://localhost:8181) | OpenFGA, MinIO, Zitadel
-| [OpenFGA](https://openfga.dev/) | FGA | TBD | Lakekeeper
+| [OpenFGA](https://openfga.dev/) | FGAC | TBD | Lakekeeper
 | [MinIO](https://github.com/minio/minio) | S3 storage with credential vending | [http://localhost:9001](http://localhost:9001) | Lakekeeper, Zitadel
 | [Zitadel](https://github.com/zitadel/zitadel) | Centralized identity, Auditing | [http://host.docker.internal:8080/](http://host.docker.internal:8080/ui/console/) |
 | [Daft](https://github.com/Eventual-Inc/Daft) | Coding in Python for DE | [http://localhost:8888](http://localhost:8888) | Jupyter notebooks
