@@ -31,6 +31,12 @@ The following technology stack leverages open-source standards and containerized
 | **Kubernetes** | Unified container platform | TBD | 
 | **Ray** | Python-based distributed computating framework | TBD | kuberay (ray cluster on top of kubernetes), daft
 
+### 2.1 Links to similar initiatives carried out in EU-cloud providers
+
+- https://www.dataminded.com/resources/locking-down-your-data-fine-grained-data-access-on-eu-clouds
+- https://www.dataminded.com/resources/portable-by-design-rethinking-data-platforms-in-the-age-of-digital-sovereignty
+- https://upcloud.com/resources/tutorials/deploying-an-open-source-data-platform-on-upcloud/
+
 ## 3. Deployment
 
 To start the datalake, execute the following:
@@ -87,7 +93,4 @@ Based on kuberentes container orchestrator and a ray distributed engine.
 
 TBD
 
-## 6. Similar initiatives and useful links
 
-- https://www.dataminded.com/resources/locking-down-your-data-fine-grained-data-access-on-eu-clouds
-- https://www.dataminded.com/resources/portable-by-design-rethinking-data-platforms-in-the-age-of-digital-sovereignty
