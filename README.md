@@ -31,7 +31,7 @@ The following technology stack leverages open-source standards and containerized
 | [Kubernetes](https://github.com/kubernetes/kubernetes) | Unified container platform | TBD | 
 | [Ray](https://github.com/ray-project/ray) | Python-based distributed computating framework | TBD | kuberay (ray cluster on top of kubernetes), daft
 
-### 2.1 Links to similar stacks tedted on EU-cloud providers
+### 2.1 Links to similar stacks tested on EU-cloud providers
 
 - https://www.dataminded.com/resources/locking-down-your-data-fine-grained-data-access-on-eu-clouds
 - https://www.dataminded.com/resources/portable-by-design-rethinking-data-platforms-in-the-age-of-digital-sovereignty
