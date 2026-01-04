@@ -1,6 +1,6 @@
 # Open-source modern lakehouse
 
-In 2026, a modern lakehouse acts as a unified interoperability layer where data engineering (DE), data science (DS) and AI teams operate against a single, consistent source of truth. By leveraging open source tools and open standards (like Apache Iceberg), enterprises can unify siloed platforms dedicated separately to DE and AI by seamlessly sharing integrated metadata, security and container-based computing platform.
+In 2026, a modern lakehouse acts as a unified interoperability layer where data engineering (DE), data science (DS) and AI teams operate against a single, consistent source of truth. By leveraging open source tools and open standards (like Apache Iceberg), **enterprises can unify siloed platforms** dedicated separately to DE and AI by **seamlessly sharing integrated metadata, security and container-based computing platform**.
 
 ## 1. Requirements
 
