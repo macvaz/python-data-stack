@@ -12,10 +12,10 @@ The following requirements are needed for a modern lakehouse:
 | **Fine-Grained Access Control (FGAC)** | Restricting access at the **row and column level** rather than just the bucket or folder level. |
 | **S3-compatible storage with credential vending** | Providing short-lived, scoped credentials (session tokens) to compute engines (Spark, Trino, Flink) on top of S3-compatible storage  without exposing long-term IAM keys. |
 | **Auditing** | A comprehensive trail of **who** accessed **what** data, when, and with which query engine. |
-| **Python code for DE** | Python is the prevalent language for DS and AI. Additionally, based on its vast library ecosystem, provides a smooth path to DE for citizen developers. Consequenly, technical and non-technical users could build complex data pipelines with minimal friction.|
-| **High performance** | Modern libraries are used in Python but written in rust, leveraging vectorized execution and Apache Arrow to provide lightning-fast, zero-copy data processing that scales from local machines to massive clusters. |
+| **Python code for DE** | Python is the prevalent language for DS and AI. Additionally, based on its vast library ecosystem, provides a **smooth path to DE for citizen developers**. Consequenly, technical and non-technical users could build complex data pipelines with minimal friction.|
+| **High performance** | Modern libraries are used in Python but written in rust, leveraging vectorized execution and **Apache Arrow to provide lightning-fast, zero-copy data** processing that scales from **local machines to massive clusters**. |
 | **Unified container platform** | Unified data cluster allowing seamless resource sharing across data science, data engineering and AI training. |
-| **Centralized identity** | Single source of truth for user and service identities, enabling the uniform enforcement of security policies across all data,  applications and infrastructure, radically simplifing compliance auditing through a unified trail of every access event. |
+| **Centralized identity** | Single **source of truth for user and service identities**, enabling the uniform enforcement of security policies across all data,  applications and infrastructure, radically simplifing compliance auditing through a unified trail of every access event. |
 
 ## 2. Technologies
 
