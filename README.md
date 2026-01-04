@@ -1,4 +1,4 @@
-### Docker-based open-source modern datalake
+## Open-source modern datalake
 
 Python-based dockerized datalake solution including:
 
@@ -33,13 +33,7 @@ FLAVOR: s3-compat
 
 3. Open the notebook called [daft.ipynb](http://localhost:8888/lab/tree/Daft.ipynb) and execute
 
-## Similar initiatives
-
-- https://www.dataminded.com/resources/locking-down-your-data-fine-grained-data-access-on-eu-clouds
-- https://www.dataminded.com/resources/portable-by-design-rethinking-data-platforms-in-the-age-of-digital-sovereignty
-
-
-### Single node data pipelines
+## Single node data pipelines
 
 Key technologies used in the project:
 
@@ -65,8 +59,13 @@ uv run tests/iceberg/ddl.py
 uv run tests/iceberg/etl.py
 ```
 
-### Cluster-based data pipelines
+## Cluster-based data pipelines
 
 Based on kuberentes container orchestrator and a ray distributed engine.
 
 TBD
+
+## Similar initiatives
+
+- https://www.dataminded.com/resources/locking-down-your-data-fine-grained-data-access-on-eu-clouds
+- https://www.dataminded.com/resources/portable-by-design-rethinking-data-platforms-in-the-age-of-digital-sovereignty
