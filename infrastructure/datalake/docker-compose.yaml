@@ -109,7 +109,6 @@ services:
       LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://${LAKEKEEPER_DB_USER}:${LAKEKEEPER_DB_PASSWORD}@db-lakekeeper:5432/${LAKEKEEPER_DB_NAME}
       LAKEKEEPER__PG_ENCRYPTION_KEY: ${LAKEKEEPER_ENCRYPTION_KEY}
       RUST_LOG: "debug,lakekeeper=trace,middle: trace"
-      LAKEKEEPER__BASE_URI: http://localhost:8181
       LAKEKEEPER__DEBUG__LOG_REQUEST_BODIES: true
       #LAKEKEEPER__OPENID_PROVIDER_URI: http://${DOMAIN}:8080
       #LAKEKEEPER__OPENID_AUDIENCE: ${LAKEKEEPER__OPENID_CLIENT_ID}
@@ -144,10 +143,8 @@ services:
       - JUPYTER_ENABLE_LAB=yes
     volumes:
       - ./notebooks:/home/mac/job/bigdata/python-data-stack/notebooks
-    # This command installs the necessary rust-powered tools on startup
     command: >
       start-notebook.sh --NotebookApp.token='' 
-      --BeforeStarting.python_cmd='pip install getdaft openlineage-python pyiceberg'
 
 # VOLUMES
 volumes:

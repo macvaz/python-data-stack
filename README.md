@@ -1,13 +1,14 @@
 ### Docker-based open-source modern datalake
 
-The following technologies are used:
+Python-based dockerized datalake solution including:
 
-| Service                  | Description                                                                                                                                         |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **MinIO**                | Object storage for Iceberg table data and metadata (Parquet/ORC files). Acts as an S3-compatible backend.                                    |
-| **Iceberg REST Catalog** | Exposes Iceberg tables via REST API. Resolves metadata, active snapshots, and Parquet file paths. Integrates Ranger plugin for ACLs/masking. |
-| **Ranger Admin**         | Web-based management UI for creating and managing security policies (table/column-level access, masking).                                    |
-| **Ranger DB**            | Stores Ranger policies, users, and service definitions.   
+| Service | Description | URL |
+| :--- | :--- | :--- |
+| **Iceberg catalog** | Lakekeeper | [http://localhost:8181](http://localhost:8181) |
+| **Identity** | Zitadel | [http://host.docker.internal:8080/](http://host.docker.internal:8080/ui/console/) |
+| **S3 Storage** | MinIO | [http://localhost:9001](http://localhost:9001) |
+| **Computation (single node)** | Daft + Notebooks | [http://localhost:8888](http://localhost:8888) |
+| **Computation (distributed)** | Daft + Ray + Kubernetes | TBD |
 
 
 To start the datalake, execute the following:
@@ -16,6 +17,27 @@ To start the datalake, execute the following:
 cd infrastructure/datalake/
 docker compose up -d
 ```
+
+## Manual provision tasks
+
+1. Create bucket in Minio (bde-warehouse)
+2. Create warehouse in lakekeeper (bde-warehouse)
+
+```
+MINIO CREDENTIALS
+ENDPOINT: http://minio:9000/
+PATH STYLE ACCESS: ENABLED
+STS: ENABLED
+FLAVOR: s3-compat
+```
+
+3. Open the notebook called [daft.ipynb](http://localhost:8888/lab/tree/Daft.ipynb) and execute
+
+## Similar initiatives
+
+- https://www.dataminded.com/resources/locking-down-your-data-fine-grained-data-access-on-eu-clouds
+- https://www.dataminded.com/resources/portable-by-design-rethinking-data-platforms-in-the-age-of-digital-sovereignty
+
 
 ### Single node data pipelines
 
