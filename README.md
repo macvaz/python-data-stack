@@ -27,7 +27,7 @@ The following technology stack leverages open-source standards and containerized
 | [OpenFGA](https://openfga.dev/) | FGAC | TBD | Lakekeeper
 | [MinIO](https://github.com/minio/minio) | S3 storage with credential vending | [http://localhost:9001](http://localhost:9001) | Lakekeeper, Zitadel
 | [Zitadel](https://github.com/zitadel/zitadel) | Centralized identity, Auditing | [http://host.docker.internal:8080/](http://host.docker.internal:8080/ui/console/) |
-| [Daft](https://github.com/Eventual-Inc/Daft) | Coding in Python for DE | [http://localhost:8888](http://localhost:8888) | Jupyter notebooks
+| [Daft](https://github.com/Eventual-Inc/Daft) | Coding in Python for DE | From IDE | Jupyter notebooks
 | [Kubernetes](https://github.com/kubernetes/kubernetes) | Unified container platform | TBD | 
 | [Ray](https://github.com/ray-project/ray) | Python-based distributed computating framework | TBD | kuberay (ray cluster on top of kubernetes), daft
 
@@ -43,7 +43,7 @@ To start the datalake, execute the following:
 
 ```bash
 cd infrastructure/datalake/
-docker compose up -d
+docker compose up
 ```
 
 ### 3.1 Manual tasks

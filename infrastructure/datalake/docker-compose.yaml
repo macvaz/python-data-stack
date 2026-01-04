@@ -130,22 +130,6 @@ services:
         condition: service_healthy
     command: ["serve"]
 
-  # --- PROCESSING LAYER (Jupyter with Daft) ---
-  daft-jupyter:
-    image: jupyter/minimal-notebook:latest
-    container_name: daft-jupyter
-    ports:
-      - "8888:8888"
-    environment:
-      - OPENLINEAGE_URL=http://marquez:5000
-      - OPENLINEAGE_NAMESPACE=dev_lakehouse
-      - AWS_ENDPOINT_URL=http://minio:9000
-      - JUPYTER_ENABLE_LAB=yes
-    volumes:
-      - ./notebooks:/home/mac/job/bigdata/python-data-stack/notebooks
-    command: >
-      start-notebook.sh --NotebookApp.token='' 
-
 # VOLUMES
 volumes:
   lakekeeper_db_data:
