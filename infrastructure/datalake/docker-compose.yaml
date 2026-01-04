@@ -1,83 +1,152 @@
 services:
-  ranger-db:
-    image: apache/ranger-db:2.7.0
-    container_name: ranger-db
-    hostname: ranger-db.example.com
-    networks:
-      - datalake
-    healthcheck:
-      test: ["CMD-SHELL", "su -c 'pg_isready -q' postgres"]
-      interval: 10s
-      timeout: 2s
-      retries: 30
-    restart: unless-stopped
-
-  ranger:
-    image: apache/ranger:2.7.0
-    container_name: ranger
-    hostname: ranger.example.com
-    networks:
-      - datalake
-    depends_on:
-      - ranger-db
-    environment:
-      RANGER_VERSION: 2.7.0
-      RANGER_DB_TYPE: postgres
-    ports:
-      - "6080:6080" #admin/rangerR0cks!
-    command: /home/ranger/scripts/ranger.sh
-    restart: unless-stopped
-
+  # --- STORAGE ---
   minio:
     image: minio/minio:latest
     container_name: minio
-    hostname: minio
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-      MINIO_REGION: us-east-1
-    command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"   
-      - "9001:9001"   #minioadmin/minioadmin
-    volumes:
-      - minio-data:/data
-    networks:
-      datalake:
-          aliases:
-            - minio.minio
+      - "9000:9000" # API
+      - "9001:9001" # Console
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 10s
+      interval: 5s
+      timeout: 2s
       retries: 5
 
-  catalog:
-    image: apache/iceberg-rest-fixture
-    container_name: catalog
-    hostname: catalog
-    networks:
-      - datalake
-    ports:
-      - 8181:8181
-    depends_on:
-      - ranger
-      - minio
+  # --- IDP ---
+  db-zitadel:
+    profiles: ["idp"]
+    image: postgres:17
+    container_name: db-zitadel
     environment:
-      AWS_ACCESS_KEY_ID: minioadmin
-      AWS_SECRET_ACCESS_KEY: minioadmin
-      AWS_REGION: us-east-1
-      CATALOG_WAREHOUSE: s3://minio/warehouse/
-      CATALOG_IO__IMPL: org.apache.iceberg.aws.s3.S3FileIO
-      CATALOG_S3_ENDPOINT: http://minio:9000
-      ICEBERG_RANGER_PLUGIN_ENABLED: "true"
-      RANGER_URL: http://ranger:6080
-      RANGER_SERVICE_NAME: iceberg
-      RANGER_POLICY_NAME: iceberg-policy
-      
+      POSTGRES_USER: ${ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME}
+      POSTGRES_PASSWORD: ${ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD}
+    volumes:
+      - zitadel_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    
 
-networks:
-  datalake:
-    driver: bridge
+  zitadel:
+    profiles: ["idp"]
+    image: ghcr.io/zitadel/zitadel:latest
+    container_name: zitadel
+    depends_on:
+      db-zitadel:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      ZITADEL_EXTERNALDOMAIN: ${DOMAIN}
+      ZITADEL_EXTERNALSECURE: false
+      ZITADEL_TLS_ENABLED: false
+      ZITADEL_MASTERKEY: ${ZITADEL_MASTERKEY}
+      ZITADEL_DATABASE_POSTGRES_HOST: db-zitadel
+      ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME: ${ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME}
+      ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD: ${ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD}
+      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: ${ZITADEL_DATABASE_POSTGRES_USER_USERNAME}
+      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: ${ZITADEL_DATABASE_POSTGRES_USER_PASSWORD}
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED: false
+      ZITADEL_SYSTEM_DOMAINS_INTERNAL_DOMAINS: zitadel,host.docker.internal
+    healthcheck:
+      test: ["CMD", "/app/zitadel", "ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s 
+    command: >
+      start-from-init 
+      --masterkeyFromEnv 
+      --tlsMode disabled
+   
 
+  # --- ICEBERG CATALOG ---
+  db-lakekeeper:
+    image: postgres:17
+    container_name: db-lakekeeper
+    environment:
+      POSTGRES_USER: ${LAKEKEEPER_DB_USER}
+      POSTGRES_PASSWORD: ${LAKEKEEPER_DB_PASSWORD}
+      POSTGRES_DB: ${LAKEKEEPER_DB_NAME}
+    volumes:
+      - lakekeeper_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  lakekeeper-db-init:
+    image: quay.io/lakekeeper/catalog:latest-main
+    pull_policy: always
+    environment:
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://${LAKEKEEPER_DB_USER}:${LAKEKEEPER_DB_PASSWORD}@db-lakekeeper:5432/${LAKEKEEPER_DB_NAME}
+      LAKEKEEPER__PG_ENCRYPTION_KEY: ${LAKEKEEPER_ENCRYPTION_KEY}
+      RUST_LOG: info
+    restart: "no"
+    depends_on:
+      db-lakekeeper:
+        condition: service_healthy
+    command: ["migrate"]
+
+
+  lakekeeper:
+    image: quay.io/lakekeeper/catalog:latest-main
+    container_name: lakekeeper
+    ports:
+      - "8181:8181"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://${LAKEKEEPER_DB_USER}:${LAKEKEEPER_DB_PASSWORD}@db-lakekeeper:5432/${LAKEKEEPER_DB_NAME}
+      LAKEKEEPER__PG_ENCRYPTION_KEY: ${LAKEKEEPER_ENCRYPTION_KEY}
+      RUST_LOG: "debug,lakekeeper=trace,middle: trace"
+      LAKEKEEPER__DEBUG__LOG_REQUEST_BODIES: true
+      #LAKEKEEPER__OPENID_PROVIDER_URI: http://${DOMAIN}:8080
+      #LAKEKEEPER__OPENID_AUDIENCE: ${LAKEKEEPER__OPENID_CLIENT_ID}
+      #LAKEKEEPER__UI__OPENID_CLIENT_ID: ${LAKEKEEPER__OPENID_CLIENT_ID}
+    healthcheck:
+      test: ["CMD", "/home/nonroot/lakekeeper", "healthcheck"]
+      interval: 1s
+      timeout: 10s
+      retries: 3
+      start_period: 3s
+    depends_on:
+      db-lakekeeper:
+        condition: service_healthy
+      lakekeeper-db-init:
+        condition: service_completed_successfully
+      #zitadel:
+      #   condition: service_healthy
+      minio:
+        condition: service_healthy
+    command: ["serve"]
+
+  # --- PROCESSING LAYER (Jupyter with Daft) ---
+  daft-jupyter:
+    image: jupyter/minimal-notebook:latest
+    container_name: daft-jupyter
+    ports:
+      - "8888:8888"
+    environment:
+      - OPENLINEAGE_URL=http://marquez:5000
+      - OPENLINEAGE_NAMESPACE=dev_lakehouse
+      - AWS_ENDPOINT_URL=http://minio:9000
+      - JUPYTER_ENABLE_LAB=yes
+    volumes:
+      - ./notebooks:/home/mac/job/bigdata/python-data-stack/notebooks
+    command: >
+      start-notebook.sh --NotebookApp.token='' 
+
+# VOLUMES
 volumes:
-  minio-data:
+  lakekeeper_db_data:
+  zitadel_db_data:
