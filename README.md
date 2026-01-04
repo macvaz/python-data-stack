@@ -21,15 +21,15 @@ The following requirements are needed for a modern lakehouse:
 
 The following technology stack leverages open-source standards and containerized orchestration to deliver a unified, high-performance environment that meets the above requirements:
 
-| Service | Requirements | URL | Related services
+| Service repo | Requirements | Service URL | Related services
 | :--- | :--- | :--- | :--- |
-| **Lakekeeper** | Iceberg catalog, Auditing | [http://localhost:8181](http://localhost:8181) | OpenFGA, MinIO, Zitadel
-| **OpenFGA** | FGA | TBD | Lakekeeper
-| **MinIO** | S3 storage with credential vending | [http://localhost:9001](http://localhost:9001) | Lakekeeper, Zitadel
-| **Zitadel** | Centralized identity, Auditing | [http://host.docker.internal:8080/](http://host.docker.internal:8080/ui/console/) |
-| **Daft** | Python code for DE | [http://localhost:8888](http://localhost:8888) | Jupyter notebooks
-| **Kubernetes** | Unified container platform | TBD | 
-| **Ray** | Python-based distributed computating framework | TBD | kuberay (ray cluster on top of kubernetes), daft
+| [Lakekeeper](https://github.com/lakekeeper/lakekeeper) | Iceberg catalog, Auditing | [http://localhost:8181](http://localhost:8181) | OpenFGA, MinIO, Zitadel
+| [OpenFGA](https://openfga.dev/) | FGA | TBD | Lakekeeper
+| [MinIO](https://github.com/minio/minio) | S3 storage with credential vending | [http://localhost:9001](http://localhost:9001) | Lakekeeper, Zitadel
+| [Zitadel](https://github.com/zitadel/zitadel) | Centralized identity, Auditing | [http://host.docker.internal:8080/](http://host.docker.internal:8080/ui/console/) |
+| [Daft](https://github.com/Eventual-Inc/Daft) | Python code for DE | [http://localhost:8888](http://localhost:8888) | Jupyter notebooks
+| [Kubernetes](https://github.com/kubernetes/kubernetes) | Unified container platform | TBD | 
+| [Ray](https://github.com/ray-project/ray) | Python-based distributed computating framework | TBD | kuberay (ray cluster on top of kubernetes), daft
 
 ### 2.1 Links to similar initiatives carried out in EU-cloud providers
 
