@@ -1,8 +1,10 @@
 # Open-source modern lakehouse
 
+## 1. Platform 
+
 In 2026, a modern lakehouse acts as a unified interoperability layer where data engineering (DE), data science (DS) and AI teams operate against a single, consistent source of truth. By leveraging open source tools and open standards (like Apache Iceberg), **enterprises can unify siloed dedicated platforms** for DE and AI by **seamlessly sharing integrated metadata, security and container-based computing platform**.
 
-## 1. Platform requirements
+### 1.1 Requirements
 
 The following requirements are needed for a modern lakehouse:
 
@@ -17,7 +19,7 @@ The following requirements are needed for a modern lakehouse:
 | **Unified container platform** | Unified data cluster allowing seamless resource sharing across data science, data engineering and AI training. |
 | **Centralized identity** | Single **source of truth for user and service identities**, enabling the uniform enforcement of security policies across all data,  applications and infrastructure, radically simplifing compliance auditing through a unified trail of every access event. |
 
-## 2. Platform technologies
+### 1.2 Technologies
 
 The following technology stack leverages open-source standards and containerized orchestration to deliver a unified, high-performance environment that meets the above requirements:
 
@@ -31,13 +33,13 @@ The following technology stack leverages open-source standards and containerized
 | [Kubernetes](https://github.com/kubernetes/kubernetes) | Unified container platform | TBD | 
 | [Ray](https://github.com/ray-project/ray) | Python-based distributed computating framework | TBD | kuberay (ray cluster on top of kubernetes), daft
 
-### 2.1 Similar stacks tested on EU cloud providers
+#### 1.2.1 Similar platform stacks tested on EU cloud providers
 
 - https://www.dataminded.com/resources/locking-down-your-data-fine-grained-data-access-on-eu-clouds
 - https://www.dataminded.com/resources/portable-by-design-rethinking-data-platforms-in-the-age-of-digital-sovereignty
 - https://upcloud.com/resources/tutorials/deploying-an-open-source-data-platform-on-upcloud/
 
-## 3. Platform deployment
+### 1.3 Deployment
 
 To start the datalake, execute the following:
 
@@ -46,7 +48,7 @@ cd infrastructure/datalake/
 docker compose up
 ```
 
-### 3.1 Manual configuration tasks
+### 1.3.1 Manual configuration tasks
 
 1. Create bucket in Minio (bde-warehouse)
 2. Create warehouse in lakekeeper (bde-warehouse)
@@ -61,9 +63,9 @@ FLAVOR: s3-compat
 
 3. Open the notebook called [daft.ipynb](http://localhost:8888/lab/tree/Daft.ipynb) and execute
 
-## 4. Data processing in local machines (single-node)
+## 2. Software (Data processes / ETLs)
 
-### 4.1 ETL requirements
+### 2.1 Requirements
 
 For demostrate the convenience of combining general-purpose python libraries inside data processing pipelines, the following use case is proposed:
 
@@ -96,8 +98,7 @@ The results will be produced in a tabular format (1 column per indicator). An ex
 | float_value | float_value | float_value  | float_value  | float_value  |
 
 
-
-### 4.2 ETL architecture
+### 2.2 Software architecture
 
 To avoid the memory overhead of the JVM and the latency of Spark, the system uses a Daft-backed execution engine.
 
@@ -113,7 +114,7 @@ To avoid the memory overhead of the JVM and the latency of Spark, the system use
 | **Complexity** | High (Requires Data Eng) | Low (Analysts write Pythonic logic) |
 
 
-### 4.3 ETL technology stack
+### 2.3 Technology stack
 To comply with the  above requirements and architecture, the following technology stack is used:
 
 | Library                  | Description                                                                                                                                         |
@@ -124,6 +125,8 @@ To comply with the  above requirements and architecture, the following technolog
 | **lark**                 | Grammar parsing tool.                                                                                  |
 | **rustworkx**            | High-performance graph library written in Rust.                                                        |
 
+
+### 2.4 Development experience in local machines (single-node mode)
 
 For creating a single-node computation environment, run:
 
@@ -137,7 +140,7 @@ For running some examples:
 uv run src/main.py
 ```
 
-## 5. User experience in clusters (distributed enviroment)
+## 2.5 Developoment experience in clusters (distributed mode)
 
 Based on kuberentes container orchestrator and a ray distributed engine.
 
