@@ -83,7 +83,7 @@ PROD_1: PROD({SUM_1}, {CONST_1})
 DIV_1: DIV({PROD_1}, {CONST_2})
 ```
 
-As seen in the example, **one indicator can reference other indicators, creating a Directed Acycle Graph (DAG)**. The computation engine will use the topological order of the DAG to control the execution order of the indicators (formulas with no dependencies will execute first, followed by those that reference them). No additional ordering metadata will be pased to the engine.
+As seen in the example, **one indicator can reference other indicators, creating a Directed Acycle Graph (DAG)**. The computation engine will use the **topological order** of the DAG to control the execution order of the indicators (formulas with no dependencies will execute first, followed by those that reference them). No additional ordering metadata will be pased to the engine.
 
 The only input to the engine is a flat file with 1 indicator definition by line, the expected systax of each line is the following: 
 
@@ -91,7 +91,7 @@ The only input to the engine is a flat file with 1 indicator definition by line,
 <INDICATOR_NAME> : <INDICATOR_FORMULA>
 ```
 
-The results will be produced in a tabular format (1 column per indicator). An example of the expected output for the above example is the following:
+The results will be produced in a **columnar format** (1 column per indicator). An example of the expected output for the above example is the following:
 
 | CONST_1 | CONST_2 | SUM_1 | PROD_1 | DIV_1 |
 | :--- | :--- | :--- | :--- | :--- |
