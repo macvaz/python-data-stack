@@ -69,7 +69,7 @@ FLAVOR: s3-compat
 
 For demostrate the convenience of combining general-purpose python libraries inside data processing pipelines or ETLs, the following use case is proposed:
 
-In modern financial engineering, risk specialists are **allowed to write their own formulas using a special formula language** and formula-driven computation engine. This use case empowers risk analysts to write their own logic without waiting for a software release cycle.
+In modern RegTech solutions, risk specialists are **allowed to write their own formulas using a special formula language** and formula-driven computation engine. This use case empowers risk analysts to write their own logic without waiting for a software release cycle.
 
 By leveraging a Python/Rust stack, high-performance execution times when processing over millions of datapoints are possible, challenging the need of traditional massive Hadoop clusters that are normally used only by big data specialists. The technology stack should be **compatible with running in a conventional local machine** like a personal/employee laptop.
 
