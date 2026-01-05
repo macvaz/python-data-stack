@@ -71,31 +71,38 @@ In modern financial engineering, risk specialists are allowed to write their own
 
 By leveraging a Python/Rust stack, high-performance execution times when processing over millions of datapoints are possible, challenging the need of traditional massive Hadoop clusters that are normally used only by big data specialists. The technology stack should be compatible with running in a conventional local machine like a personal/employee laptop.
 
-Risk specialists require a "Formula Builder" interface where they can input logic like:
+Risk specialists require a formula language to define risk indicator formulas like these: 
 
-* Total_Exposure = Asset_Price * Quantity
-* Risk_Weighted_Asset = Total_Exposure * Counterparty_Factor
-* Final_Score = Risk_Weighted_Asset / Portfolio_Limit
+```
+CONST_1: 1.20
+CONST_2: 0.75
+SUM_1: SUM({T(OWN_FUNDS)R(1)C(4)}, {T(LIABILITIES)R(2)C(10)})
+PROD_1: PROD({SUM_1}, {CONST_1})
+DIV_1: DIV({PROD_1}, {CONST_2})
+```
 
-The "computation engine" will use the topological order defined in the Directed Acycle Graph (DAG) that the formulas implicitly defines. The computation engine will use the DAG to control the execution order (formulas with no dependencies will execute first, followed by those that reference them). 
+As seen in the example, one indicator can reference other indicators, creating a Directed Acycle Graph (DAG). The computation engine will use the topological order of the DAG to control the execution order of the indicators (formulas with no dependencies will execute first, followed by those that reference them). No additional ordering metadata will be pased to the engine.
 
-No additional ordering metadata will be pased to the engine, only a CSV file with the formulas. The CSV file will have the following columns:
+The only input to the engine is a flat file with 1 indicator definition by line, the expected systax of each line is the following: 
 
-* Indicator name
-* Indicator formula
+```
+<INDICATOR_NAME> : <FORMULA>
+```
 
-The results will be produced in a tabular format with the following structure:
-* Indicator value (0)
-* Indicator value (n)
+The results will be produced in a tabular format (1 column per indicator). An example of the expected output for the above example is the following:
 
-Each column represented an indicator value, whill use the name of the "Indicator name" input in the csv file.
+| CONST_1 | CONST_2 | SUM_1 | PROD_1 | DIV_1 |
+| :--- | :--- | :--- | :--- | :--- |
+| float_value | float_value | float_value  | float_value  | float_value  |
+
+
 
 ### 4.2 ETL architecture
 
 To avoid the memory overhead of the JVM and the latency of Spark, the system uses a Daft-backed execution engine.
 
 * **Frontend**: No front-end will be developed. Formulas will be defined in a file
-* **Compiler Layer**: A Python service that parses user strings into an Abstract Syntax Tree (AST). It will use the topological order of the formula's graph to control the execution
+* **Compiler Layer**: A Python service that parses input file into an Abstract Syntax Tree (AST). It will use the topological order of the formula's graph to control the execution
 * **Computation Core**: The AST is mapped directly to Daft expressions, which are executed in parallel across CPU cores using Rust's memory-safe concurrency.
 
 | Feature | Legacy (Hadoop/Spark) | Modern (Polars/Rust) |
@@ -127,14 +134,24 @@ uv sync
 For running some examples:
 
 ```bash
-uv run tests/iceberg/ddl.py
-uv run tests/iceberg/etl.py
+uv run src/main.py
 ```
 
 ## 5. User experience in clusters (distributed enviroment)
 
 Based on kuberentes container orchestrator and a ray distributed engine.
 
-TBD
+TBC
+
+```bash
+minikube start
+kubectl -n kuberay port-forward service/raycluster-kuberay-head-svc 8265:8265 > /dev/null &
+```
+
+activate virtual env:
+ray job submit --address http://localhost:8265 --working-dir /home/mac/job/bigdata/formula_engine/tests --runtime-env-json '{"pip": ["daft"]}' -- python daft_minio_ray.py 
+
+Ray dashboard
+127.0.0.1:8265
 
 
