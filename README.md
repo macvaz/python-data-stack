@@ -48,7 +48,7 @@ cd infrastructure/datalake/
 docker compose up
 ```
 
-### 1.3.1 Manual configuration tasks
+#### 1.3.1 Manual configuration tasks
 
 1. Create bucket in Minio (bde-warehouse)
 2. Create warehouse in lakekeeper (bde-warehouse)
@@ -140,7 +140,7 @@ For running some examples:
 uv run src/main.py
 ```
 
-## 2.5 Developoment experience in clusters (distributed mode)
+### 2.5 Developoment experience in clusters (distributed mode)
 
 Based on kuberentes container orchestrator and a ray distributed engine.
 
