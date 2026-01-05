@@ -28,4 +28,4 @@ formula_grammar = r"""
     %ignore WS
 """
 
-parser = Lark(formula_grammar, parser='lalr')
+parser = Lark(formula_grammar, parser="lalr")

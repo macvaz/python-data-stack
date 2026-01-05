@@ -21,4 +21,3 @@ def main(indicators: str, datapoints: daft.DataFrame):
         df = df.with_column(name, expr)
 
     df.show()
-

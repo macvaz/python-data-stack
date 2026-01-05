@@ -10,6 +10,7 @@ dependencies = [
     "lark>=1.3.1",
     "pyiceberg>=0.10.0",
     "ray[client,default]",
+    "ruff>=0.14.9",
     "rustworkx>=0.17.1",
 ]
 

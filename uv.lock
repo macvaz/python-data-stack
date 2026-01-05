@@ -364,6 +364,7 @@ dependencies = [
     { name = "lark" },
     { name = "pyiceberg" },
     { name = "ray", extra = ["client", "default"] },
+    { name = "ruff" },
     { name = "rustworkx" },
 ]
 
@@ -384,6 +385,7 @@ requires-dist = [
     { name = "lark", specifier = ">=1.3.1" },
     { name = "pyiceberg", specifier = ">=0.10.0" },
     { name = "ray", extras = ["client", "default"] },
+    { name = "ruff", specifier = ">=0.14.9" },
     { name = "rustworkx", specifier = ">=0.17.1" },
 ]
 
