@@ -63,15 +63,15 @@ FLAVOR: s3-compat
 
 3. Open the notebook called [daft.ipynb](http://localhost:8888/lab/tree/Daft.ipynb) and execute
 
-## 2. Software (Data processes / ETLs)
+## 2. Software
 
 ### 2.1 Requirements
 
-For demostrate the convenience of combining general-purpose python libraries inside data processing pipelines, the following use case is proposed:
+For demostrate the convenience of combining general-purpose python libraries inside data processing pipelines or ETLs, the following use case is proposed:
 
-In modern financial engineering, risk specialists are allowed to write their own formulas using a special formula language and formula-driven computation engine. This use case empowers risk analysts to write their own logic without waiting for a software release cycle.
+In modern financial engineering, risk specialists are **allowed to write their own formulas using a special formula language** and formula-driven computation engine. This use case empowers risk analysts to write their own logic without waiting for a software release cycle.
 
-By leveraging a Python/Rust stack, high-performance execution times when processing over millions of datapoints are possible, challenging the need of traditional massive Hadoop clusters that are normally used only by big data specialists. The technology stack should be compatible with running in a conventional local machine like a personal/employee laptop.
+By leveraging a Python/Rust stack, high-performance execution times when processing over millions of datapoints are possible, challenging the need of traditional massive Hadoop clusters that are normally used only by big data specialists. The technology stack should be **compatible with running in a conventional local machine** like a personal/employee laptop.
 
 Risk specialists require a formula language to define risk indicator formulas like these: 
 
@@ -83,19 +83,19 @@ PROD_1: PROD({SUM_1}, {CONST_1})
 DIV_1: DIV({PROD_1}, {CONST_2})
 ```
 
-As seen in the example, one indicator can reference other indicators, creating a Directed Acycle Graph (DAG). The computation engine will use the topological order of the DAG to control the execution order of the indicators (formulas with no dependencies will execute first, followed by those that reference them). No additional ordering metadata will be pased to the engine.
+As seen in the example, **one indicator can reference other indicators, creating a Directed Acycle Graph (DAG)**. The computation engine will use the topological order of the DAG to control the execution order of the indicators (formulas with no dependencies will execute first, followed by those that reference them). No additional ordering metadata will be pased to the engine.
 
 The only input to the engine is a flat file with 1 indicator definition by line, the expected systax of each line is the following: 
 
 ```
-<INDICATOR_NAME> : <FORMULA>
+<INDICATOR_NAME> : <INDICATOR_FORMULA>
 ```
 
 The results will be produced in a tabular format (1 column per indicator). An example of the expected output for the above example is the following:
 
 | CONST_1 | CONST_2 | SUM_1 | PROD_1 | DIV_1 |
 | :--- | :--- | :--- | :--- | :--- |
-| float_value | float_value | float_value  | float_value  | float_value  |
+| 1.20 | 0.75 | 7.3  | 3.2  | 5.4  |
 
 
 ### 2.2 Software architecture
@@ -134,10 +134,10 @@ For creating a single-node computation environment, run:
 uv sync
 ```
 
-For running some examples:
+For running the unit tests:
 
 ```bash
-uv run src/main.py
+uv run pytest
 ```
 
 ### 2.5 Developoment experience in clusters (distributed mode)
@@ -152,9 +152,11 @@ kubectl -n kuberay port-forward service/raycluster-kuberay-head-svc 8265:8265 > 
 ```
 
 activate virtual env:
-ray job submit --address http://localhost:8265 --working-dir /home/mac/job/bigdata/formula_engine/tests --runtime-env-json '{"pip": ["daft"]}' -- python daft_minio_ray.py 
 
-Ray dashboard
-127.0.0.1:8265
+```bash
+ray job submit --address http://localhost:8265 --working-dir /home/mac/job/bigdata/formula_engine/tests --runtime-env-json '{"pip": ["daft"]}' -- python daft_minio_ray.py 
+```
+
+Ray dashboard url: http://localhost:8265
 
 
