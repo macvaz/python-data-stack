@@ -65,7 +65,7 @@ FLAVOR: s3-compat
 
 ## 2. Software
 
-### 2.1 Requirements
+### 2.1 Functional requirements for the data pipelines
 
 For demostrate the convenience of combining general-purpose python libraries inside data processing pipelines or ETLs, the following use case is proposed:
 
