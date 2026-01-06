@@ -6,25 +6,32 @@ formula_grammar = r"""
     assignment: identifier ":" expression
 
     ?expression: function
-               | reference
-               | NUMBER        
-               | identifier
+            | reference
+            | identifier
+            | NUMBER
 
-    function:  FUNC_NAME "(" (expression ("," expression)*)? ")"
-    
+    function: FUNC_NAME "(" [expression ("," expression)*] ")"
+
     reference: "{" (attribute | identifier)+ "}"
-    attribute: "T(" TEXT ")"  -> table
-             | "R(" INT ")"   -> row
-             | "C(" INT ")"   -> column
+
+    attribute: "T(" (CNAME | STRING_QUOTED) ")" -> table
+            | "R(" INT ")"                     -> row
+            | "C(" INT ")"                     -> column
 
     identifier: CNAME
-    FUNC_NAME: "SUM" | "PROD" | "DIV" | "AVG"
+
+    // Terminals
+
+    FUNC_NAME.2: "SUM" | "PROD" | "DIV" | "AVG"
+    T_START.3: "T("
+    R_START.3: "R("
+    C_START.3: "C("
+    STRING_QUOTED: /"[^"\\]*"/  // Supports table names with spaces if needed
 
     %import common.CNAME
-    %import common.NUMBER 
+    %import common.NUMBER
     %import common.INT
     %import common.WS
-    %import common.WORD -> TEXT
     %ignore WS
 """
 

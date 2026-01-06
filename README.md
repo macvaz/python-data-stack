@@ -85,7 +85,7 @@ DIV_1: DIV({PROD_1}, {CONST_2})
 
 As seen in the example, **one indicator can reference other indicators, creating a Directed Acycle Graph (DAG)**. The computation engine will use the **topological order** of the DAG to control the execution order of the indicators (formulas with no dependencies will execute first, followed by those that reference them). No additional ordering metadata will be pased to the engine.
 
-The only input to the engine is a flat file with 1 indicator definition by line, the expected systax of each line is the following: 
+The only input to the engine is a flat file with 1 indicator definition by line, the expected syntax of each line is the following: 
 
 ```
 <INDICATOR_NAME> : <INDICATOR_FORMULA>
