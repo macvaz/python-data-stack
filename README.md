@@ -115,7 +115,7 @@ To avoid the memory overhead of the JVM and the latency of Spark, the system use
 
 
 ### 2.3 Technology stack
-To comply with the  above requirements and architecture, the following technology stack is used:
+To comply with the functional requirements and architecture, the following technology stack is selected:
 
 | Library                  | Description                                                                                                                                         |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
