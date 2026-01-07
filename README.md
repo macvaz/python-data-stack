@@ -91,12 +91,40 @@ The only input to the engine is a flat file with 1 indicator definition by line,
 <INDICATOR_NAME> : <INDICATOR_FORMULA>
 ```
 
-The results will be produced in a **columnar format** (1 column per indicator). An example of the expected output for the above example is the following:
+To compute the results, the engine sources the value of the referenced datapoints externally. For improving the readability of the results, the datapoint name is created for the formulas as follows:
 
-| CONST_1 | CONST_2 | SUM_1 | PROD_1 | DIV_1 |
-| :--- | :--- | :--- | :--- | :--- |
-| 1.20 | 0.75 | 7.3  | 3.2  | 5.4  |
+```
+  T(OWN_FUNDS)R(1)C(4) -> OWN_FUNDS_R1_C4
+  T(LIABILITIES)R(2)C(10) -> LIABILITIES_R2_C10
+```
 
+The values of the referenced datapoints is used in columnar format, to speed up the calculations. A simplified example is the following:
+
+```
+╭─────────────────┬────────────────────╮
+│ OWN_FUNDS_R1_C4 ┆ LIABILITIES_R2_C10 │
+│ ---             ┆ ---                │
+│ Float64         ┆ Float64            │
+╞═════════════════╪════════════════════╡
+│ 100             ┆ 50                 │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ 200             ┆ 80                 │
+╰─────────────────┴────────────────────╯
+```
+
+The computed indicator results are also presented in a **columnar format**. According to the formulas define in the example and the values of the referenced datapoints, the expected results should be the following: 
+
+```
+╭─────────────────┬────────────────────┬─────────┬─────────┬─────────┬─────────┬─────────╮
+│ OWN_FUNDS_R1_C4 ┆ LIABILITIES_R2_C10 ┆ CONST_1 ┆ CONST_2 ┆ SUM_1   ┆ PROD_1  ┆ DIV_1   │
+│ ---             ┆ ---                ┆ ---     ┆ ---     ┆ ---     ┆ ---     ┆ ---     │
+│ Float64         ┆ Float64            ┆ Float64 ┆ Float64 ┆ Float64 ┆ Float64 ┆ Float64 │
+╞═════════════════╪════════════════════╪═════════╪═════════╪═════════╪═════════╪═════════╡
+│ 100             ┆ 50                 ┆ 1.2     ┆ 0.75    ┆ 150     ┆ 180     ┆ 240     │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌┤
+│ 200             ┆ 80                 ┆ 1.2     ┆ 0.75    ┆ 280     ┆ 336     ┆ 448     │
+╰─────────────────┴────────────────────┴─────────┴─────────┴─────────┴─────────┴─────────╯
+```
 
 ### 2.2 Software architecture
 
