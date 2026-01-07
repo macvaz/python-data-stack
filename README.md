@@ -94,8 +94,8 @@ The only input to the engine is a flat file with 1 indicator definition by line,
 To compute the results, the engine sources the value of the referenced datapoints externally. For improving the readability of the results, the datapoint name is created for the formulas as follows:
 
 ```
-  T(OWN_FUNDS)R(1)C(4) -> OWN_FUNDS_R1_C4
-  T(LIABILITIES)R(2)C(10) -> LIABILITIES_R2_C10
+T(OWN_FUNDS)R(1)C(4) -> OWN_FUNDS_R1_C4
+T(LIABILITIES)R(2)C(10) -> LIABILITIES_R2_C10
 ```
 
 The values of the referenced datapoints is used in columnar format, to speed up the calculations. A simplified example is the following:
