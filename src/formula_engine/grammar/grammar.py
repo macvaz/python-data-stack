@@ -22,7 +22,7 @@ formula_grammar = r"""
 
     // Terminals
 
-    FUNC_NAME.2: "SUM" | "PROD" | "DIV" | "AVG"
+    FUNC_NAME.2: "SUM" | "PROD" | "DIV"
     T_START.3: "T("
     R_START.3: "R("
     C_START.3: "C("
